@@ -1,0 +1,6 @@
+{
+  "name": "Birthday Surprise - Kejutan Ulang Tahun",
+  "description": "Aplikasi web kejutan ulang tahun interaktif dengan countdown, balon animasi, musik latar, tema warna Frosted Glass, dan kotak hadiah eksklusif berisi kenangan bertag kode akses.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
