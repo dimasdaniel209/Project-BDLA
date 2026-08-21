@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   X,
   Save,
@@ -15,9 +15,15 @@ import {
   User,
   Music,
   Flame,
+  FileKey,
+  Download,
+  Upload,
+  ShieldCheck,
+  AlertCircle,
 } from 'lucide-react';
 import { BirthdayConfig, MemoryItem, GiftVoucher } from '../types';
-import { saveBirthdayConfig, resetBirthdayConfig } from '../utils/storage';
+import { saveBirthdayConfig, resetBirthdayConfig, encodeConfigToUrl } from '../utils/storage';
+import { encryptConfig, decryptConfig, downloadEncryptedConfigFile } from '../utils/crypto';
 
 interface Props {
   config: BirthdayConfig;
@@ -28,9 +34,12 @@ interface Props {
 
 export const ConfigDrawer: React.FC<Props> = ({ config, isOpen, onClose, onSave }) => {
   const [formData, setFormData] = useState<BirthdayConfig>({ ...config });
-  const [activeSubTab, setActiveSubTab] = useState<'general' | 'memories' | 'vouchers'>('general');
+  const [activeSubTab, setActiveSubTab] = useState<'general' | 'memories' | 'vouchers' | 'encryption'>('general');
   const [isSavedToast, setIsSavedToast] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [encryptStatusMsg, setEncryptStatusMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!isOpen) return null;
 
@@ -114,9 +123,56 @@ export const ConfigDrawer: React.FC<Props> = ({ config, isOpen, onClose, onSave 
   };
 
   const handleShareLink = () => {
-    navigator.clipboard.writeText(window.location.href);
+    saveBirthdayConfig(formData);
+    onSave(formData);
+    const shareableUrl = encodeConfigToUrl(formData);
+    navigator.clipboard.writeText(shareableUrl);
     setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
+    setTimeout(() => setCopiedLink(false), 2500);
+  };
+
+  const handleExportEncryptedFile = async () => {
+    try {
+      setIsExporting(true);
+      setEncryptStatusMsg(null);
+      await downloadEncryptedConfigFile(formData, 'birthday-config.enc');
+      setEncryptStatusMsg({
+        type: 'success',
+        text: 'File "birthday-config.enc" berhasil diunduh dan dienkripsi dengan aman (AES-256)!',
+      });
+    } catch (e: any) {
+      setEncryptStatusMsg({
+        type: 'error',
+        text: e.message || 'Gagal mengunduh file terenkripsi.',
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setEncryptStatusMsg(null);
+      const text = await file.text();
+      const decrypted = await decryptConfig(text);
+      setFormData(decrypted);
+      saveBirthdayConfig(decrypted);
+      onSave(decrypted);
+      setEncryptStatusMsg({
+        type: 'success',
+        text: `Berhasil mendekripsi dan memuat data untuk ${decrypted.recipientName}!`,
+      });
+    } catch (err: any) {
+      setEncryptStatusMsg({
+        type: 'error',
+        text: err.message || 'Gagal membaca atau mendekripsi file.',
+      });
+    } finally {
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -146,10 +202,10 @@ export const ConfigDrawer: React.FC<Props> = ({ config, isOpen, onClose, onSave 
         </div>
 
         {/* Subtab Navigation */}
-        <div className="flex border-b border-white/10 bg-slate-950/50 p-2 gap-2">
+        <div className="flex border-b border-white/10 bg-slate-950/50 p-2 gap-1.5 overflow-x-auto">
           <button
             onClick={() => setActiveSubTab('general')}
-            className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5 ${
+            className={`py-2 px-2.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 ${
               activeSubTab === 'general' ? 'bg-rose-500 text-white' : 'text-slate-400 hover:bg-white/5'
             }`}
           >
@@ -157,7 +213,7 @@ export const ConfigDrawer: React.FC<Props> = ({ config, isOpen, onClose, onSave 
           </button>
           <button
             onClick={() => setActiveSubTab('memories')}
-            className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5 ${
+            className={`py-2 px-2.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 ${
               activeSubTab === 'memories' ? 'bg-rose-500 text-white' : 'text-slate-400 hover:bg-white/5'
             }`}
           >
@@ -165,11 +221,19 @@ export const ConfigDrawer: React.FC<Props> = ({ config, isOpen, onClose, onSave 
           </button>
           <button
             onClick={() => setActiveSubTab('vouchers')}
-            className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5 ${
+            className={`py-2 px-2.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 ${
               activeSubTab === 'vouchers' ? 'bg-rose-500 text-white' : 'text-slate-400 hover:bg-white/5'
             }`}
           >
-            <Gift className="w-3.5 h-3.5" /> Voucher ({formData.vouchers.length})
+            <Gift className="w-3.5 h-3.5" /> Voucher
+          </button>
+          <button
+            onClick={() => setActiveSubTab('encryption')}
+            className={`py-2 px-2.5 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0 ${
+              activeSubTab === 'encryption' ? 'bg-emerald-500 text-white' : 'text-slate-400 hover:bg-white/5'
+            }`}
+          >
+            <FileKey className="w-3.5 h-3.5 text-emerald-300" /> File .enc
           </button>
         </div>
 
@@ -485,6 +549,110 @@ export const ConfigDrawer: React.FC<Props> = ({ config, isOpen, onClose, onSave 
                     />
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB: Encrypted File (.enc) Storage & Backup */}
+          {activeSubTab === 'encryption' && (
+            <div className="space-y-5 animate-in fade-in duration-300">
+              <div className="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-4 space-y-2 text-emerald-200">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0" />
+                  <h3 className="font-bold text-sm text-emerald-300">
+                    Enkripsi File Aman (AES-256 GCM)
+                  </h3>
+                </div>
+                <p className="text-xs leading-relaxed text-emerald-200/80">
+                  Kamu bisa menyimpan seluruh pengaturan (nama, foto, countdown, doa lampion, surat cinta, voucher) ke dalam satu file terenkripsi (<span className="font-mono font-bold text-emerald-300">.enc</span>). Data di dalamnya tidak bisa dibaca langsung secara sembarangan karena diproteksi enkripsi kriptografi.
+                </p>
+              </div>
+
+              {/* Status Alert Message */}
+              {encryptStatusMsg && (
+                <div
+                  className={`p-3 rounded-xl text-xs flex items-center gap-2 ${
+                    encryptStatusMsg.type === 'success'
+                      ? 'bg-emerald-500/20 border border-emerald-500/40 text-emerald-300'
+                      : 'bg-rose-500/20 border border-rose-500/40 text-rose-300'
+                  }`}
+                >
+                  {encryptStatusMsg.type === 'success' ? (
+                    <Check className="w-4 h-4 shrink-0 text-emerald-400" />
+                  ) : (
+                    <AlertCircle className="w-4 h-4 shrink-0 text-rose-400" />
+                  )}
+                  <span>{encryptStatusMsg.text}</span>
+                </div>
+              )}
+
+              {/* Action 1: Export / Download .enc */}
+              <div className="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 space-y-3">
+                <div>
+                  <h4 className="font-bold text-sm text-white flex items-center gap-2">
+                    <Download className="w-4 h-4 text-emerald-400" /> 1. Unduh File Terenkripsi (.enc)
+                  </h4>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Download file <span className="font-mono text-amber-300 font-bold">birthday-config.enc</span> yang berisi seluruh konfigurasi saat ini.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleExportEncryptedFile}
+                  disabled={isExporting}
+                  className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg transition-all active:scale-98 cursor-pointer disabled:opacity-50"
+                >
+                  <Download className="w-4 h-4" />
+                  {isExporting ? 'Mengenkripsi & Mengunduh...' : 'Unduh File birthday-config.enc'}
+                </button>
+              </div>
+
+              {/* Action 2: Import / Load .enc */}
+              <div className="bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 space-y-3">
+                <div>
+                  <h4 className="font-bold text-sm text-white flex items-center gap-2">
+                    <Upload className="w-4 h-4 text-cyan-400" /> 2. Unggah & Baca File Terenkripsi
+                  </h4>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Pilih file <span className="font-mono text-cyan-300">.enc</span> yang pernah kamu unduh untuk memuat dan mendekripsi semua datanya ke aplikasi ini.
+                  </p>
+                </div>
+
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  accept=".enc,application/octet-stream,text/plain"
+                  className="hidden"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 border border-slate-600 transition-all active:scale-98 cursor-pointer"
+                >
+                  <Upload className="w-4 h-4 text-cyan-400" />
+                  Pilih File .enc dari Komputer / HP
+                </button>
+              </div>
+
+              {/* Guide: How Auto-Load Works */}
+              <div className="bg-slate-950/60 p-4 rounded-2xl border border-slate-800 space-y-2 text-xs text-slate-300">
+                <h5 className="font-bold text-amber-300 flex items-center gap-1.5">
+                  💡 Cara Kerja Otomatis Saat Di-Host / Dibagikan:
+                </h5>
+                <ol className="list-decimal list-inside space-y-1.5 text-slate-400 leading-relaxed">
+                  <li>
+                    Unduh file <span className="font-mono text-white">birthday-config.enc</span> dari tombol di atas.
+                  </li>
+                  <li>
+                    Masukkan file tersebut ke dalam folder <span className="font-mono text-amber-200">public/birthday-config.enc</span> di repositori GitHub kamu.
+                  </li>
+                  <li>
+                    Saat website dibuka di browser mana pun (tanpa URL link panjang), aplikasi akan **otomatis membaca dan mendekripsi** file tersebut secara langsung!
+                  </li>
+                </ol>
               </div>
             </div>
           )}

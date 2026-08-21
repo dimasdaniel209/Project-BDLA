@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Sparkles, Gift, Lock } from 'lucide-react';
 import { BirthdayConfig, ThemeId } from './types';
 import { THEMES } from './utils/themes';
-import { loadBirthdayConfig } from './utils/storage';
+import { loadBirthdayConfig, saveBirthdayConfig } from './utils/storage';
+import { loadEncryptedConfigFromPublic } from './utils/crypto';
 import { BackgroundOrbs } from './components/BackgroundOrbs';
 import { Balloons } from './components/Balloons';
 import { Navbar } from './components/Navbar';
@@ -19,6 +20,16 @@ export default function App() {
   const [isAdminPinModalOpen, setIsAdminPinModalOpen] = useState(false);
   const [adminPinInput, setAdminPinInput] = useState('');
   const [adminPinError, setAdminPinError] = useState(false);
+
+  // Check and auto-load encrypted file if present in public folder
+  useEffect(() => {
+    loadEncryptedConfigFromPublic().then((encConfig) => {
+      if (encConfig) {
+        setConfig(encConfig);
+        saveBirthdayConfig(encConfig);
+      }
+    });
+  }, []);
 
   const handleOpenConfig = () => {
     // If admin PIN is set, require PIN verification first

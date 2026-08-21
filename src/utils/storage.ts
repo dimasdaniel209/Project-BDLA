@@ -78,8 +78,44 @@ export const DEFAULT_CONFIG: BirthdayConfig = {
   ]
 };
 
+export function encodeConfigToUrl(config: BirthdayConfig): string {
+  try {
+    const jsonStr = JSON.stringify(config);
+    // Safe base64 encoding for Unicode
+    const encoded = btoa(encodeURIComponent(jsonStr));
+    const url = new URL(window.location.href);
+    url.searchParams.set('c', encoded);
+    return url.toString();
+  } catch (e) {
+    console.error('Failed to encode config to URL', e);
+    return window.location.href;
+  }
+}
+
+export function decodeConfigFromUrl(): BirthdayConfig | null {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const encoded = params.get('c') || params.get('data');
+    if (!encoded) return null;
+    const jsonStr = decodeURIComponent(atob(encoded));
+    const parsed = JSON.parse(jsonStr);
+    return { ...DEFAULT_CONFIG, ...parsed };
+  } catch (e) {
+    console.error('Failed to decode config from URL', e);
+    return null;
+  }
+}
+
 export function loadBirthdayConfig(): BirthdayConfig {
   try {
+    // 1. Priority: URL Parameter (Shared link from sender)
+    const fromUrl = decodeConfigFromUrl();
+    if (fromUrl) {
+      saveBirthdayConfig(fromUrl);
+      return fromUrl;
+    }
+
+    // 2. Local Storage
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
