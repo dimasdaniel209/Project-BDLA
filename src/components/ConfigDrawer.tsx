@@ -24,6 +24,7 @@ import {
 import { BirthdayConfig, MemoryItem, GiftVoucher } from '../types';
 import { saveBirthdayConfig, resetBirthdayConfig, encodeConfigToUrl } from '../utils/storage';
 import { encryptConfig, decryptConfig, downloadEncryptedConfigFile } from '../utils/crypto';
+import { saveCloudBirthdayConfig } from '../utils/firebase';
 
 interface Props {
   config: BirthdayConfig;
@@ -50,21 +51,24 @@ export const ConfigDrawer: React.FC<Props> = ({ config, isOpen, onClose, onSave 
     setFormData((prev) => ({ ...prev, [field]: val }));
   };
 
-  const handleSaveAll = () => {
+  const handleSaveAll = async () => {
     saveBirthdayConfig(formData);
     onSave(formData);
     setIsSavedToast(true);
+    // Auto-sync to Cloud Firestore database
+    await saveCloudBirthdayConfig(formData);
     setTimeout(() => {
       setIsSavedToast(false);
       onClose();
     }, 1200);
   };
 
-  const handleReset = () => {
+  const handleReset = async () => {
     if (window.confirm('Kembalikan ke pengaturan default awal?')) {
       const def = resetBirthdayConfig();
       setFormData(def);
       onSave(def);
+      await saveCloudBirthdayConfig(def);
     }
   };
 

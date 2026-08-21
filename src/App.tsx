@@ -4,6 +4,11 @@ import { BirthdayConfig, ThemeId } from './types';
 import { THEMES } from './utils/themes';
 import { loadBirthdayConfig, saveBirthdayConfig } from './utils/storage';
 import { loadEncryptedConfigFromPublic } from './utils/crypto';
+import {
+  getCloudBirthdayConfig,
+  saveCloudBirthdayConfig,
+  subscribeToCloudBirthdayConfig,
+} from './utils/firebase';
 import { BackgroundOrbs } from './components/BackgroundOrbs';
 import { Balloons } from './components/Balloons';
 import { Navbar } from './components/Navbar';
@@ -21,14 +26,35 @@ export default function App() {
   const [adminPinInput, setAdminPinInput] = useState('');
   const [adminPinError, setAdminPinError] = useState(false);
 
-  // Check and auto-load encrypted file if present in public folder
+  // Check cloud Firestore first, encrypted public file, and subscribe to real-time changes
   useEffect(() => {
-    loadEncryptedConfigFromPublic().then((encConfig) => {
-      if (encConfig) {
-        setConfig(encConfig);
-        saveBirthdayConfig(encConfig);
+    // 1. Fetch initial cloud config
+    getCloudBirthdayConfig().then((cloudCfg) => {
+      if (cloudCfg) {
+        setConfig(cloudCfg);
+        saveBirthdayConfig(cloudCfg);
+      } else {
+        // Fallback to public .enc file if any
+        loadEncryptedConfigFromPublic().then((encConfig) => {
+          if (encConfig) {
+            setConfig(encConfig);
+            saveBirthdayConfig(encConfig);
+          }
+        });
       }
     });
+
+    // 2. Real-time subscription across all devices
+    const unsubscribe = subscribeToCloudBirthdayConfig((updatedCloudCfg) => {
+      if (updatedCloudCfg) {
+        setConfig(updatedCloudCfg);
+        saveBirthdayConfig(updatedCloudCfg);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const handleOpenConfig = () => {
