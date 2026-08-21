@@ -188,16 +188,16 @@ export default function App() {
 
       {/* Admin Verification PIN Modal */}
       {isAdminPinModalOpen && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
-          <div className="bg-slate-900 border border-slate-700/80 rounded-3xl p-6 sm:p-8 w-full max-w-sm shadow-2xl text-center space-y-4 relative">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
+          <div className="bg-[#031d14] border border-emerald-500/40 rounded-3xl p-6 sm:p-8 w-full max-w-sm shadow-2xl text-center space-y-4 relative">
             <button
               onClick={() => setIsAdminPinModalOpen(false)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-full hover:bg-slate-800 transition-colors"
+              className="absolute top-4 right-4 text-emerald-300/60 hover:text-white p-2 rounded-full hover:bg-emerald-950 transition-colors"
             >
               ✕
             </button>
 
-            <div className="w-14 h-14 bg-rose-500/20 border border-rose-500/40 rounded-2xl flex items-center justify-center text-rose-400 mx-auto">
+            <div className="w-14 h-14 bg-emerald-500/20 border border-emerald-500/40 rounded-2xl flex items-center justify-center text-emerald-400 mx-auto">
               <Lock className="w-7 h-7" />
             </div>
 
@@ -218,10 +218,10 @@ export default function App() {
                   }}
                   placeholder="PIN"
                   autoFocus
-                  className="w-full bg-slate-800 border border-slate-700 rounded-2xl px-4 py-3 text-center text-lg text-white font-mono tracking-widest focus:outline-none focus:border-rose-500 transition-all"
+                  className="w-full bg-emerald-950/60 border border-emerald-500/30 rounded-2xl px-4 py-3 text-center text-lg text-white font-mono tracking-widest focus:outline-none focus:border-emerald-400 transition-all"
                 />
                 {adminPinError && (
-                  <p className="text-xs text-rose-400 mt-1.5 font-medium animate-shake">
+                  <p className="text-xs text-amber-400 mt-1.5 font-medium animate-shake">
                     PIN salah
                   </p>
                 )}
@@ -229,7 +229,7 @@ export default function App() {
 
               <button
                 type="submit"
-                className="w-full bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold py-3 rounded-2xl text-sm shadow-lg transition-all"
+                className="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-black font-extrabold py-3 rounded-2xl text-sm shadow-lg transition-all"
               >
                 Buka
               </button>

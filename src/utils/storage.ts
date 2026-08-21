@@ -7,7 +7,7 @@ export const DEFAULT_CONFIG: BirthdayConfig = {
   recipientName: 'Aurelia Catherine',
   senderName: 'LD',
   age: 24,
-  birthDate: new Date(Date.now() + 10000).toISOString(), // 10 seconds from now for immediate testing experience, or configurable!
+  birthDate: '2026-09-24T00:00:00.000Z', // 24 September 2026 00:00:00
   passcode: '2512',
   passcodeHint: 'XXXXXX',
   specialMessage: 'Happy Birthday LA❤️! Semoga di usiamu yang ke-24 ini membawa sejuta kebahagiaan, senyuman manis, dan semua impian indahmu menjadi kenyataan. Terima kasih telah hadir dan mewarnai setiap detik dalam hidupku. ✨💖',

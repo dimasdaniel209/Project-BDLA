@@ -167,15 +167,15 @@ export const GiftBoxModal: React.FC<Props> = ({ config, isOpen, onClose }) => {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
         ref={containerRef}
-        className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden bg-gradient-to-b from-[#020617] via-[#090d23] to-[#02040a] text-white selection:bg-rose-500 selection:text-white"
+        className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden bg-gradient-to-b from-[#01140e] via-[#021f16] to-[#010d08] text-white selection:bg-emerald-500 selection:text-black"
       >
         {/* =========================================================================
             BACKGROUND: Starry Night Sky, Warm Cosmic Glow & Floating Embers
            ========================================================================= */}
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[750px] h-[520px] bg-gradient-to-b from-amber-500/15 via-rose-500/10 to-transparent rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 left-10 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl" />
-          <div className="absolute top-1/2 right-10 w-96 h-96 bg-rose-600/10 rounded-full blur-3xl" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[750px] h-[520px] bg-gradient-to-b from-amber-500/15 via-emerald-500/15 to-transparent rounded-full blur-3xl" />
+          <div className="absolute bottom-1/4 left-10 w-96 h-96 bg-emerald-600/15 rounded-full blur-3xl" />
+          <div className="absolute top-1/2 right-10 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl" />
 
           {/* Golden Embers */}
           <div className="absolute top-12 left-10 w-1.5 h-1.5 bg-white rounded-full animate-ping opacity-75" />
@@ -183,7 +183,7 @@ export const GiftBoxModal: React.FC<Props> = ({ config, isOpen, onClose }) => {
           <div className="absolute top-64 left-1/4 w-1 h-1 bg-white rounded-full animate-pulse opacity-60" />
           <div className="absolute top-1/3 right-1/3 w-1.5 h-1.5 bg-yellow-100 rounded-full animate-ping opacity-70" />
           <div className="absolute top-2/3 left-16 w-1 h-1 bg-amber-300 rounded-full animate-pulse opacity-90" />
-          <div className="absolute top-3/4 right-12 w-2 h-2 bg-rose-200 rounded-full animate-pulse opacity-70" />
+          <div className="absolute top-3/4 right-12 w-2 h-2 bg-emerald-200 rounded-full animate-pulse opacity-70" />
           <div className="absolute bottom-20 left-1/3 w-1.5 h-1.5 bg-white rounded-full animate-ping opacity-75" />
         </div>
 
@@ -192,7 +192,7 @@ export const GiftBoxModal: React.FC<Props> = ({ config, isOpen, onClose }) => {
            ========================================================================= */}
         <button
           onClick={onClose}
-          className="fixed top-5 right-5 sm:top-7 sm:right-7 z-50 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-slate-900/60 hover:bg-rose-500/80 border border-white/20 hover:border-rose-400 text-white flex items-center justify-center backdrop-blur-md transition-all shadow-xl cursor-pointer active:scale-95"
+          className="fixed top-5 right-5 sm:top-7 sm:right-7 z-50 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-emerald-950/80 hover:bg-emerald-500 hover:text-black border border-emerald-500/30 hover:border-emerald-400 text-white flex items-center justify-center backdrop-blur-md transition-all shadow-xl cursor-pointer active:scale-95"
           title="Tutup & Kembali"
         >
           <X className="w-5 h-5" />
@@ -542,18 +542,18 @@ export const GiftBoxModal: React.FC<Props> = ({ config, isOpen, onClose }) => {
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.9, y: 20 }}
                 onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-lg bg-slate-900 border-2 border-amber-400/40 rounded-3xl p-6 sm:p-7 text-white shadow-2xl backdrop-blur-2xl"
+                className="w-full max-w-lg bg-[#031d14] border-2 border-emerald-500/40 rounded-3xl p-6 sm:p-7 text-white shadow-2xl backdrop-blur-2xl"
               >
-                <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+                <div className="flex items-center justify-between pb-3 border-b border-emerald-500/20 mb-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-amber-400/20 text-amber-300 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-amber-300 flex items-center justify-center">
                       <Flame className="w-4 h-4" />
                     </div>
                     <div>
                       <h3 className="font-bold text-base text-white">
                         Tuliskan Doa & Harapan di Lampion
                       </h3>
-                      <p className="text-xs text-amber-200/70">
+                      <p className="text-xs text-emerald-300/70">
                         Tulisan ini akan tertera pada lampion saat terbang ke angkasa
                       </p>
                     </div>
@@ -573,13 +573,13 @@ export const GiftBoxModal: React.FC<Props> = ({ config, isOpen, onClose }) => {
                       value={tempWish}
                       onChange={(e) => setTempWish(e.target.value)}
                       placeholder="Tuliskan doa & harapan terindah untuk ulang tahun ini..."
-                      className="w-full bg-slate-950 border border-amber-400/40 rounded-2xl p-3.5 text-sm text-white focus:outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-400/30 transition-all resize-none shadow-inner font-serif italic"
+                      className="w-full bg-emerald-950/80 border border-emerald-500/40 rounded-2xl p-3.5 text-sm text-white focus:outline-none focus:border-amber-300 focus:ring-2 focus:ring-amber-400/30 transition-all resize-none shadow-inner font-serif italic"
                     />
                   </div>
 
                   {/* Preset Wish Inspiration Chips */}
                   <div className="space-y-1.5">
-                    <span className="text-[11px] text-slate-400 font-semibold block">
+                    <span className="text-[11px] text-emerald-300/80 font-semibold block">
                       💡 Inspirasi Harapan:
                     </span>
                     <div className="flex flex-wrap gap-1.5">
@@ -590,7 +590,7 @@ export const GiftBoxModal: React.FC<Props> = ({ config, isOpen, onClose }) => {
                             `Semoga di usia ke-${config.age || 24} ini selalu sehat, panjang umur, bahagia, dan semua mimpi indah tercapai! ✨`
                           )
                         }
-                        className="text-[11px] bg-white/5 hover:bg-amber-400/20 border border-white/10 text-amber-200 px-2.5 py-1 rounded-full transition-colors cursor-pointer"
+                        className="text-[11px] bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-500/30 text-amber-200 px-2.5 py-1 rounded-full transition-colors cursor-pointer"
                       >
                         🌟 Sehat & Bahagia Selalu
                       </button>
@@ -601,14 +601,14 @@ export const GiftBoxModal: React.FC<Props> = ({ config, isOpen, onClose }) => {
                             'Semoga langkahmu selalu dimudahkan, penuh keberkahan, dikelilingi orang-orang tulus, dan makin bersinar! 💖'
                           )
                         }
-                        className="text-[11px] bg-white/5 hover:bg-rose-400/20 border border-white/10 text-rose-200 px-2.5 py-1 rounded-full transition-colors cursor-pointer"
+                        className="text-[11px] bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-500/30 text-emerald-200 px-2.5 py-1 rounded-full transition-colors cursor-pointer"
                       >
                         🌸 Penuh Berkah & Cinta
                       </button>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-white/10">
+                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-emerald-500/20">
                     <button
                       type="button"
                       onClick={() => setIsEditingWish(false)}
@@ -618,7 +618,7 @@ export const GiftBoxModal: React.FC<Props> = ({ config, isOpen, onClose }) => {
                     </button>
                     <button
                       type="submit"
-                      className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold px-5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-orange-500/30 transition-all cursor-pointer"
+                      className="bg-gradient-to-r from-emerald-500 to-amber-500 hover:from-emerald-400 hover:to-amber-400 text-black font-bold px-5 py-2 rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-emerald-500/30 transition-all cursor-pointer"
                     >
                       <Check className="w-3.5 h-3.5" /> Pasang Harapan & Terbangkan ✨
                     </button>
@@ -640,7 +640,7 @@ export const GiftBoxModal: React.FC<Props> = ({ config, isOpen, onClose }) => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedPhotoIndex(null)}
-              className="fixed inset-0 z-50 bg-black/92 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6"
+              className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6"
             >
               {/* Previous Photo Button */}
               {memories.length > 1 && (
@@ -676,7 +676,7 @@ export const GiftBoxModal: React.FC<Props> = ({ config, isOpen, onClose }) => {
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
                 onClick={(e) => e.stopPropagation()}
-                className="relative max-w-3xl w-full bg-slate-900/90 border border-amber-300/40 rounded-3xl p-4 sm:p-6 text-white shadow-2xl backdrop-blur-2xl flex flex-col max-h-[90vh]"
+                className="relative max-w-3xl w-full bg-[#031d14]/95 border border-emerald-500/40 rounded-3xl p-4 sm:p-6 text-white shadow-2xl backdrop-blur-2xl flex flex-col max-h-[90vh]"
               >
                 {/* Close Button */}
                 <button

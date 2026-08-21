@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { Lock, Unlock, ChevronUp, ChevronDown, Sparkles, KeyRound } from 'lucide-react';
+import { Lock, Unlock, ChevronUp, ChevronDown, Sparkles } from 'lucide-react';
 import { ThemeConfig } from '../types';
 import { audioEngine } from '../utils/audio';
 
@@ -104,28 +104,6 @@ export const GiftBoxTrigger: React.FC<Props> = ({
 
   return (
     <div className="w-full flex flex-col items-center justify-center relative select-none py-2">
-      {/* Top Floating Glass Status Pill */}
-      <div className="flex items-center gap-2 mb-4">
-        <div
-          className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase transition-all shadow-lg backdrop-blur-xl ${
-            isUnlocked || isMatch
-              ? 'bg-emerald-400 text-emerald-950 border border-emerald-200 shadow-emerald-400/30'
-              : 'bg-white/20 text-white border border-white/30 shadow-black/10'
-          }`}
-        >
-          {isUnlocked || isMatch ? (
-            <>
-              <Unlock className="w-3.5 h-3.5 text-emerald-950 stroke-[2.5]" />
-              <span>Kunci Terbuka ✨</span>
-            </>
-          ) : (
-            <>
-              <KeyRound className="w-3.5 h-3.5 text-amber-200" />
-              <span>Scroll Kunci Hadiah</span>
-            </>
-          )}
-        </div>
-      </div>
       {/* 3D PERSPECTIVE FLOATING GIFT BOX STAGE */}
       <div
         className="relative w-72 h-64 sm:w-80 sm:h-72 flex items-center justify-center cursor-pointer my-2 group select-none"
@@ -529,16 +507,12 @@ export const GiftBoxTrigger: React.FC<Props> = ({
         </motion.div>
       </div>
 
-      {/* FROSTED GLASS SCROLL COMBINATION LOCK (Clean Glass Effect) */}
+      {/* FROSTED GLASS COMBINATION LOCK (Clean Glass Effect) */}
       <div
         className={`w-full max-w-xs mt-2 flex flex-col items-center ${
           isShaking ? 'animate-shake' : ''
         }`}
       >
-        <p className="text-xs text-white/90 font-semibold text-center mb-2.5 drop-shadow-sm">
-          Scroll / geser angka untuk membuka:
-        </p>
-
         {/* Frosted Glass Dials Floating Bar */}
         <div className="bg-white/20 backdrop-blur-2xl p-2.5 sm:p-3 rounded-2xl border border-white/30 shadow-xl flex items-center justify-center gap-2 w-full">
           {dials.map((digit, idx) => {
